@@ -88,6 +88,12 @@ class Game:
                     self.enemies.remove(enemy)
                     break
 
+    def handle_enemy_melee_attack(self):
+        for enemy in self.enemies[:]:
+            if self.player.rect.colliderect(enemy.rect):
+                self.player.health -= 1
+                self.enemies.remove(enemy)
+
     def enemy_hit_actions(self):
         self.points += 1
 
@@ -107,6 +113,7 @@ class Game:
             enemy.update(self.player)
 
         self.handle_bullet_enemy_collision()
+        self.handle_enemy_melee_attack()
 
         self.spawnEnemy()
 

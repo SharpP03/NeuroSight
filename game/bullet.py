@@ -1,8 +1,11 @@
 import pygame
+import math
 
 class Bullet:
-    def __init__(self, player):
+    def __init__(self, player, angle_offset=0):
         self.player = player
+
+        # base bullet rect
         self.rect = pygame.Rect(player.rect.centerx, player.rect.centery, 10, 10)
         self.speed = 7
 
@@ -20,6 +23,15 @@ class Bullet:
         if length != 0:
             self.dx /= length
             self.dy /= length
+
+        # Angle offset
+        if angle_offset != 0:
+            rad = math.radians(angle_offset)
+            rotated_dx = self.dx * math.cos(rad) - self.dy * math.sin(rad)
+            rotated_dy = self.dx * math.sin(rad) + self.dy * math.cos(rad)
+
+            self.dx = rotated_dx
+            self.dy = rotated_dy
 
     def update(self):
         # Apply direction and speed

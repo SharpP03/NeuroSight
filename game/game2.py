@@ -61,12 +61,18 @@ class Game:
                 self.running = False
 
             if event.type == pygame.KEYDOWN:
+                # reload
                 if event.key == pygame.K_r:
-                    self.player.start_reload()
+                    self.player.weapon.start_reload()
+
+                # shoot action
                 if event.key == pygame.K_SPACE:
-                    if self.player.ammo_in_mag > 0 and not self.player.reloading:
-                        self.bullets.append(Bullet(self.player))
-                        self.player.ammo_in_mag -= 1
+                    result = self.player.weapon.fire(self.player)
+                    if result:
+                        if isinstance(result, list):
+                            self.bullets.extend(result)
+                        else:
+                            self.bullets.append(result)
                         self.camera_shake(intensity=3, duration=80)
 
     def handle_bullet_enemy_collision(self):
@@ -115,6 +121,8 @@ class Game:
         else:
             self.camera_offset = [0, 0]
 
+            self.player.weapon.update(self.clock.get_time())
+
     def spawnEnemy(self):
         now = pygame.time.get_ticks()
         if now - self.last_spawn >= self.spawn_delay:
@@ -149,7 +157,8 @@ class Game:
             self.UI.drawPlayerHp(self.player.health)
             self.UI.debug(len(self.bullets))
             self.UI.drawPoints(self.points)
-            self.UI.drawAmmo(self.player)
+            self.UI.drawAmmo(self.player.weapon)
+
 
         # Get offset
         ox, oy = self.camera_offset
@@ -164,6 +173,7 @@ class Game:
             self.UI.drawPlayerHp(self.player.health)
             self.UI.debug(len(self.bullets))
             self.UI.drawPoints(self.points)
-            self.UI.drawAmmo(self.player)
+            self.UI.drawAmmo(self.player.weapon)
+
 
         pygame.display.flip()

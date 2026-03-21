@@ -26,6 +26,7 @@ class Game:
         self.camera_offset = [0, 0]
         self.shake_timer = 0
         self.shake_intensity = 0
+        self.shake_affects_ui = True
 
         # game parameters
         self.points = 0
@@ -126,8 +127,9 @@ class Game:
         self.shake_timer = duration
 
     def draw(self):
-        # Prepare scene for display
+        # Prepare scene
         self.display.fill((0, 0, 0))
+
         self.player.draw(self.display)
 
         for bullet in self.bullets:
@@ -136,13 +138,24 @@ class Game:
         for enemy in self.enemies:
             enemy.draw(self.display)
 
-        # Display the scene with offset
+        # UI with shake effect
+        if self.shake_affects_ui:
+            self.UI.screen = self.display # assign layer with shake
+            self.UI.drawPlayerHp(self.player.health)
+            self.UI.debug(len(self.bullets))
+            self.UI.drawPoints(self.points)
+
+        # Get offset
         ox, oy = self.camera_offset
+
+        # Render scene with offset
         self.screen.blit(self.display, (ox, oy))
 
-        # Display UI over scene
-        self.UI.drawPlayerHp(self.player.health)
-        self.UI.debug(len(self.bullets))
-        self.UI.drawPoints(self.points)
+        # UI without shake effect
+        if not self.shake_affects_ui:
+            self.UI.screen = self.screen
+            self.UI.drawPlayerHp(self.player.health)
+            self.UI.debug(len(self.bullets))
+            self.UI.drawPoints(self.points)
 
         pygame.display.flip()

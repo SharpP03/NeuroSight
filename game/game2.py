@@ -19,6 +19,9 @@ class Game:
         self.clock = pygame.time.Clock()
         self.running = True
 
+        # game parameters
+        self.points = 0
+
         # User Interface
         self.UI = UI(self.screen)
 
@@ -52,6 +55,24 @@ class Game:
                 if event.key == pygame.K_SPACE:
                     self.bullets.append(Bullet(self.player))
 
+    def handle_bullet_enemy_collision(self):
+        # copy lists [:]
+        for bullet in self.bullets[:]:
+            for enemy in self.enemies[:]:
+                if bullet.rect.colliderect(enemy.rect):
+
+                    # actions
+                    self.enemy_hit_actions()
+
+                    # cleanup
+                    self.bullets.remove(bullet)
+                    self.enemies.remove(enemy)
+                    break
+
+    def enemy_hit_actions(self):
+        self.points += 1
+
+
     def update(self):
         keys = pygame.key.get_pressed()
         self.player.update(keys)
@@ -66,6 +87,8 @@ class Game:
 
         for enemy in self.enemies:
             enemy.update(self.player)
+
+        self.handle_bullet_enemy_collision()
 
         self.spawnEnemy()
 
@@ -86,8 +109,8 @@ class Game:
         self.player.draw(self.screen)
 
         self.UI.drawPlayerHp(self.player.health)
-        self.UI.drawFrags( "TESTING")
         self.UI.debug(len(self.bullets))
+        self.UI.drawPoints(self.points)
 
         for bullet in self.bullets:
             bullet.draw(self.screen)

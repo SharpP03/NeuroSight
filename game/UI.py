@@ -13,9 +13,9 @@ class UI:
             text = self.font.render("Health: " + str(hp), True, (255, 255, 255))
             self.screen.blit(text, (10, 20))
 
-    def drawFrags(self, frags=None):
-        if frags is not None:
-            text = self.font.render("Frags: " + str(frags), True, (255, 255, 255))
+    def drawPoints(self, points=None):
+        if points is not None:
+            text = self.font.render("Points: " + str(points), True, (255, 255, 255))
             self.txt_width = text.get_width()
             self.screen.blit(text, (self.WIDTH - self.txt_width - 10, 20))
 

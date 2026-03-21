@@ -15,9 +15,17 @@ class Game:
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
         pygame.display.set_caption("NeuroSight")
 
+        # Main scene
+        self.display = pygame.Surface((self.WIDTH, self.HEIGHT))
+
         # clock and game life cycle
         self.clock = pygame.time.Clock()
         self.running = True
+
+        # visual effects parameters
+        self.camera_offset = [0, 0]
+        self.shake_timer = 0
+        self.shake_intensity = 0
 
         # game parameters
         self.points = 0
@@ -54,13 +62,13 @@ class Game:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     self.bullets.append(Bullet(self.player))
+                    self.camera_shake(intensity=3, duration=80)
 
     def handle_bullet_enemy_collision(self):
         # copy lists [:]
         for bullet in self.bullets[:]:
             for enemy in self.enemies[:]:
                 if bullet.rect.colliderect(enemy.rect):
-
                     # actions
                     self.enemy_hit_actions()
 
@@ -72,7 +80,6 @@ class Game:
     def enemy_hit_actions(self):
         self.points += 1
 
-
     def update(self):
         keys = pygame.key.get_pressed()
         self.player.update(keys)
@@ -82,8 +89,8 @@ class Game:
 
             # remove bullet if outside screen
             if (bullet.rect.x < 0 or bullet.rect.x > self.WIDTH or
-                bullet.rect.y < 0 or bullet.rect.y > self.HEIGHT):
-                    self.bullets.remove(bullet)
+                    bullet.rect.y < 0 or bullet.rect.y > self.HEIGHT):
+                self.bullets.remove(bullet)
 
         for enemy in self.enemies:
             enemy.update(self.player)
@@ -91,6 +98,17 @@ class Game:
         self.handle_bullet_enemy_collision()
 
         self.spawnEnemy()
+
+        # camera shake
+        dt = self.clock.get_time()
+
+        if self.shake_timer > 0:
+            self.shake_timer -= dt
+            import random
+            self.camera_offset[0] = random.randint(-self.shake_intensity, self.shake_intensity)
+            self.camera_offset[1] = random.randint(-self.shake_intensity, self.shake_intensity)
+        else:
+            self.camera_offset = [0, 0]
 
     def spawnEnemy(self):
         now = pygame.time.get_ticks()
@@ -103,19 +121,28 @@ class Game:
             if self.player.rect.colliderect(enemy.rect):
                 print("hit")
 
+    def camera_shake(self, intensity=5, duration=150):
+        self.shake_intensity = intensity
+        self.shake_timer = duration
+
     def draw(self):
-        self.screen.fill((0, 0, 0))
+        # Prepare scene for display
+        self.display.fill((0, 0, 0))
+        self.player.draw(self.display)
 
-        self.player.draw(self.screen)
+        for bullet in self.bullets:
+            bullet.draw(self.display)
 
+        for enemy in self.enemies:
+            enemy.draw(self.display)
+
+        # Display the scene with offset
+        ox, oy = self.camera_offset
+        self.screen.blit(self.display, (ox, oy))
+
+        # Display UI over scene
         self.UI.drawPlayerHp(self.player.health)
         self.UI.debug(len(self.bullets))
         self.UI.drawPoints(self.points)
-
-        for bullet in self.bullets:
-            bullet.draw(self.screen)
-
-        for enemy in self.enemies:
-            enemy.draw(self.screen)
 
         pygame.display.flip()

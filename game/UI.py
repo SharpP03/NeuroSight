@@ -20,5 +20,5 @@ class UI:
             self.screen.blit(text, (self.WIDTH - self.txt_width - 10, 20))
 
     def debug(self, bullets_count):
-        text = self.font.render(f"Bullets: {bullets_count}", True, (255, 255, 255))
+        text = self.font.render(f"Bullets: {bullets_count}", True, pygame.Color("#FF00AA"))
         self.screen.blit(text, (10, 60))

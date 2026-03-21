@@ -61,9 +61,15 @@ class Game:
                 self.running = False
 
             if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    self.player.start_reload()
                 if event.key == pygame.K_SPACE:
-                    self.bullets.append(Bullet(self.player))
-                    self.camera_shake(intensity=3, duration=80)
+                    if self.player.ammo_in_mag > 0 and not self.player.reloading:
+                        self.bullets.append(Bullet(self.player))
+                        self.player.ammo_in_mag -= 1
+                        self.camera_shake(intensity=3, duration=80)
+                    # else:
+                    #     print("CLICK! No ammo") # TODO: out of ammo feedback
 
     def handle_bullet_enemy_collision(self):
         # copy lists [:]
@@ -140,10 +146,12 @@ class Game:
 
         # UI with shake effect
         if self.shake_affects_ui:
-            self.UI.screen = self.display # assign layer with shake
+            self.UI.screen = self.display  # assign layer with shake
+
             self.UI.drawPlayerHp(self.player.health)
             self.UI.debug(len(self.bullets))
             self.UI.drawPoints(self.points)
+            self.UI.drawAmmo(self.player)
 
         # Get offset
         ox, oy = self.camera_offset
@@ -154,8 +162,10 @@ class Game:
         # UI without shake effect
         if not self.shake_affects_ui:
             self.UI.screen = self.screen
+
             self.UI.drawPlayerHp(self.player.health)
             self.UI.debug(len(self.bullets))
             self.UI.drawPoints(self.points)
+            self.UI.drawAmmo(self.player)
 
         pygame.display.flip()

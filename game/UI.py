@@ -22,3 +22,7 @@ class UI:
     def debug(self, bullets_count):
         text = self.font.render(f"Bullets: {bullets_count}", True, pygame.Color("#FF00AA"))
         self.screen.blit(text, (10, 60))
+
+    def drawAmmo(self, player):
+        text = self.font.render(f"Ammo: {player.ammo_in_mag}/{player.reserve_ammo}", True, (255,240,103))
+        self.screen.blit(text, (10, 100))

@@ -4,6 +4,7 @@ from .bullet import Bullet
 from .UI import UI
 from .enemy import Enemy
 
+
 class Game:
     def __init__(self):
         pygame.init()
@@ -18,21 +19,21 @@ class Game:
         self.clock = pygame.time.Clock()
         self.running = True
 
-        #User Interface
+        # User Interface
         self.UI = UI(self.screen)
 
-        #Entities
-
+        # Entities
         self.bullets = []
 
-        #Player parameters
-        self.player = Player(self.WIDTH//2, self.HEIGHT//2)
+        # Player parameters
+        self.player = Player(self.WIDTH // 2, self.HEIGHT // 2)
 
-        #Enemy parameters
+        # Enemy parameters
         self.enemies = []
         self.spawn_delay = 5000
         self.last_spawn = -5000
 
+    # Main loop
     def run(self):
         while self.running:
             self.handle_events()
@@ -51,14 +52,17 @@ class Game:
                 if event.key == pygame.K_SPACE:
                     self.bullets.append(Bullet(self.player))
 
-
-
     def update(self):
         keys = pygame.key.get_pressed()
         self.player.update(keys)
 
         for bullet in self.bullets:
             bullet.update()
+
+            # remove bullet if outside screen
+            if (bullet.rect.x < 0 or bullet.rect.x > self.WIDTH or
+                bullet.rect.y < 0 or bullet.rect.y > self.HEIGHT):
+                    self.bullets.remove(bullet)
 
         for enemy in self.enemies:
             enemy.update(self.player)
@@ -81,8 +85,9 @@ class Game:
 
         self.player.draw(self.screen)
 
-        self.UI.drawPlayerHp(self.screen,self.player.health)
-        self.UI.drawFrags(self.screen,"TESTING")
+        self.UI.drawPlayerHp(self.player.health)
+        self.UI.drawFrags( "TESTING")
+        self.UI.debug(len(self.bullets))
 
         for bullet in self.bullets:
             bullet.draw(self.screen)

@@ -1,15 +1,12 @@
 import pygame
 
-from game import player
-
-
 class Bullet:
     def __init__(self, player):
         self.player = player
         self.rect = pygame.Rect(player.rect.centerx, player.rect.centery, 10, 10)
         self.speed = 7
 
-        #mouse
+        # mouse
         self.mouse = pygame.mouse.get_pos()
         self.mouse_x = self.mouse[0]
         self.mouse_y = self.mouse[1]

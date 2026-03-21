@@ -9,7 +9,7 @@ class Player:
 
         # player parameters
         self.speed = 5
-        self.health = 10;
+        self.health = 10
 
         # Weapon system
         self.weapon = Pistol()

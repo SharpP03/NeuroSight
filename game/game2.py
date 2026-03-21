@@ -68,8 +68,6 @@ class Game:
                         self.bullets.append(Bullet(self.player))
                         self.player.ammo_in_mag -= 1
                         self.camera_shake(intensity=3, duration=80)
-                    # else:
-                    #     print("CLICK! No ammo") # TODO: out of ammo feedback
 
     def handle_bullet_enemy_collision(self):
         # copy lists [:]

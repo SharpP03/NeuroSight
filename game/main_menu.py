@@ -10,6 +10,10 @@ class MainMenu:
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
         pygame.display.set_caption("NeuroSight - Menu")
 
+        # FPS limit
+        self.clock = pygame.time.Clock()
+        self.MENU_FPS = 30
+
         # Caption font
         self.big_font = pygame.font.SysFont("none", 72)
         # options font
@@ -22,6 +26,7 @@ class MainMenu:
             self.handle_events()
             self.draw()
             pygame.display.flip()
+            self.clock.tick(self.MENU_FPS)
 
         pygame.quit()
 

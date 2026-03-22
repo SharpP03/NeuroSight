@@ -6,7 +6,6 @@ from .enemy import Enemy
 
 class Game:
     def __init__(self):
-        pygame.init()
 
         # Window setup
         self.WIDTH = 800
@@ -52,7 +51,7 @@ class Game:
             self.draw()
             self.clock.tick(60)
 
-        return
+        return "MENU"
 
     def handle_events(self):
         for event in pygame.event.get():

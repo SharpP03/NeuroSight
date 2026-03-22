@@ -1,47 +1,47 @@
 import pygame
-from game.game2 import Game
 
 class MainMenu:
     def __init__(self):
-        pygame.init()
-
-        # main menu window parameters
+        # Window settings
         self.WIDTH, self.HEIGHT = 800, 800
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
         pygame.display.set_caption("NeuroSight - Menu")
 
-        # FPS limit
+        # FPS setting
         self.clock = pygame.time.Clock()
-        self.MENU_FPS = 30
+        self.FPS_MENU = 30
 
-        # Caption font
-        self.big_font = pygame.font.SysFont("none", 72)
-        # options font
-        self.small_font = pygame.font.SysFont("none", 28)
+        # Fonts
+        self.big_font = pygame.font.SysFont("Arial", 72)
+        self.small_font = pygame.font.SysFont("Arial", 28)
 
+        # Scene settings
         self.running = True
+        self.next_scene = None
 
     def run(self):
         while self.running:
             self.handle_events()
             self.draw()
             pygame.display.flip()
-            self.clock.tick(self.MENU_FPS)
+            self.clock.tick(self.FPS_MENU)
 
-        pygame.quit()
+        return self.next_scene
 
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
+                self.next_scene = None
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
-                    game = Game()
-                    game.run()
+                    self.running = False
+                    self.next_scene = "GAME"
 
                 if event.key == pygame.K_ESCAPE:
                     self.running = False
+                    self.next_scene = None
 
     def draw(self):
         self.screen.fill((10, 10, 10))

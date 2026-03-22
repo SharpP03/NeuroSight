@@ -1,6 +1,5 @@
 import pygame
 from .player import Player
-from .bullet import Bullet
 from .UI import UI
 from .enemy import Enemy
 
@@ -53,7 +52,7 @@ class Game:
             self.draw()
             self.clock.tick(60)
 
-        pygame.quit()
+        return
 
     def handle_events(self):
         for event in pygame.event.get():

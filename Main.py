@@ -1,5 +1,5 @@
-from game.game2 import Game
+from game.main_menu import MainMenu
 
 if __name__ == "__main__":
-    game = Game()
-    game.run()
+    menu = MainMenu()
+    menu.run()

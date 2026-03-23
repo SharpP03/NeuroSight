@@ -13,6 +13,10 @@ class Level1:
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
         pygame.display.set_caption("NeuroSight – Level 1")
 
+        # MAP SIZE
+        self.MAP_WIDTH = 5000
+        self.MAP_HEIGHT = 5000
+
         # assign camera
         self.camera = Camera(self.WIDTH, self.HEIGHT)
 
@@ -117,8 +121,10 @@ class Level1:
 
         for bullet in self.bullets[:]:
             bullet.update()
-            if (bullet.rect.x < 0 or bullet.rect.x > self.WIDTH or
-                    bullet.rect.y < 0 or bullet.rect.y > self.HEIGHT):
+
+            # remove bullet if outside MAP
+            if (bullet.rect.x < -(self.MAP_WIDTH//2) or bullet.rect.x > self.MAP_WIDTH//2 or
+                    bullet.rect.y < -(self.MAP_WIDTH//2) or bullet.rect.y > self.MAP_HEIGHT//2):
                 self.bullets.remove(bullet)
 
         for enemy in self.enemies:

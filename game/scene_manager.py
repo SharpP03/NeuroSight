@@ -7,8 +7,9 @@ class SceneManager:
             next_scene = self.current_scene.run() # run the scene
 
             if next_scene == "GAME":
-                from game.game2 import Game
-                self.current_scene = Game()
+                from game.Levels.level1 import Level1
+                self.current_scene = Level1()
+
 
             elif next_scene == "MENU":
                 from game.main_menu import MainMenu

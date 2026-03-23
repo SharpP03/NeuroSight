@@ -37,5 +37,6 @@ class Player:
         self.rect.x += dx * self.speed
         self.rect.y += dy * self.speed
 
-    def draw(self, screen):
-        pygame.draw.rect(screen, (150, 10, 222), self.rect)
+    def draw(self, screen, camera):
+        pygame.draw.rect(screen, (150, 10, 222), camera.apply(self.rect))
+

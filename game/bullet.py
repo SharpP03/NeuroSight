@@ -38,5 +38,6 @@ class Bullet:
         self.rect.x += self.dx * self.speed
         self.rect.y += self.dy * self.speed
 
-    def draw(self, screen):
-        pygame.draw.rect(screen, (255, 255, 0), self.rect)
+    def draw(self, screen, camera):
+        pygame.draw.rect(screen, (255, 255, 0), camera.apply(self.rect))
+

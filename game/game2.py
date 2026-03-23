@@ -1,7 +1,8 @@
 import pygame
-from .player import Player
-from .UI import UI
-from .enemy import Enemy
+from player import Player
+from UI import UI
+from enemy import Enemy
+from camera import Camera
 
 
 class Game:
@@ -12,6 +13,9 @@ class Game:
         self.HEIGHT = 800
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
         pygame.display.set_caption("NeuroSight")
+
+        # assign camera
+        self.camera = Camera(self.WIDTH, self.HEIGHT)
 
         # Main scene
         self.display = pygame.Surface((self.WIDTH, self.HEIGHT))
@@ -50,6 +54,7 @@ class Game:
             self.update()
             self.draw()
             self.clock.tick(60)
+            self.camera.update(self.player)
 
         return "MENU"
 
@@ -147,13 +152,13 @@ class Game:
         # Prepare scene
         self.display.fill((0, 0, 0))
 
-        self.player.draw(self.display)
+        self.player.draw(self.display, self.camera)
 
         for bullet in self.bullets:
-            bullet.draw(self.display)
+            bullet.draw(self.display, self.camera)
 
         for enemy in self.enemies:
-            enemy.draw(self.display)
+            enemy.draw(self.display, self.camera)
 
         # UI with shake effect
         if self.shake_affects_ui:

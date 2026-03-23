@@ -44,7 +44,7 @@ class Enemy:
         self.rect.x += dx * self.speed
         self.rect.y += dy * self.speed
 
+    def draw(self, screen, camera):
+        pygame.draw.rect(screen, (255, 0, 0), camera.apply(self.rect))
 
-    def draw(self, screen):
-        pygame.draw.rect(screen, (255,0,0), self.rect)
 

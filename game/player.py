@@ -14,12 +14,6 @@ class Player:
         # Weapon system
         self.weapon = Pistol()
 
-
-    def start_reload(self):
-        if not self.reloading and self.ammo_in_mag < self.mag_size and self.reserve_ammo > 0:
-            self.reloading = True
-            self.reload_timer = self.reload_time
-
     def update(self, keys):
         dx = 0
         dy = 0
@@ -36,8 +30,8 @@ class Player:
         # movement normalization
         length = (dx*dx + dy*dy) ** 0.5
         if length != 0:
-            dx = dx / length
-            dy = dy / length
+            dx /= length
+            dy /= length
 
         # apply movement
         self.rect.x += dx * self.speed

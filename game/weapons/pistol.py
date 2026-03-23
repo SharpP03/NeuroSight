@@ -11,11 +11,12 @@ class Pistol(Weapon):
         self.fire_rate = 250  # ms
         self.damage = 1
 
-    def fire(self, player):
+    def fire(self, player, camera):
         if not self.can_fire():
             return None
 
         self.ammo_in_mag -= 1
         self.fire_cooldown = self.fire_rate
 
-        return Bullet(player)
+        return Bullet(player, camera)
+

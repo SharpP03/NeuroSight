@@ -2,29 +2,31 @@ import pygame
 import math
 
 class Bullet:
-    def __init__(self, player, angle_offset=0):
+    def __init__(self, player, camera, angle_offset=0):
         self.player = player
 
         # base bullet rect
         self.rect = pygame.Rect(player.rect.centerx, player.rect.centery, 10, 10)
         self.speed = 7
 
-        # mouse
-        self.mouse = pygame.mouse.get_pos()
-        self.mouse_x = self.mouse[0]
-        self.mouse_y = self.mouse[1]
+        # mouse position on SCREEN
+        mouse_x, mouse_y = pygame.mouse.get_pos()
 
-        # Length vector from mouse to player
-        self.dx = self.mouse_x - self.player.rect.centerx
-        self.dy = self.mouse_y - self.player.rect.centery
+        # convert to WORLD coordinates
+        mouse_world_x = mouse_x + camera.offset.x
+        mouse_world_y = mouse_y + camera.offset.y
 
-        # Vector Normalization
+        # direction vector from player to mouse in WORLD space
+        self.dx = mouse_world_x - self.player.rect.centerx
+        self.dy = mouse_world_y - self.player.rect.centery
+
+        # normalize
         length = (self.dx ** 2 + self.dy ** 2) ** 0.5
         if length != 0:
             self.dx /= length
             self.dy /= length
 
-        # Angle offset
+        # angle offset (shotgun spread etc.)
         if angle_offset != 0:
             rad = math.radians(angle_offset)
             rotated_dx = self.dx * math.cos(rad) - self.dy * math.sin(rad)

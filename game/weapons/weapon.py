@@ -43,6 +43,6 @@ class Weapon:
             self.fire_cooldown <= 0
         )
 
-    def fire(self, player):
-        """Override in subclasses"""
+    def fire(self, player, camera):
+        """Override in subclasses — must return Bullet(player, camera)"""
         pass

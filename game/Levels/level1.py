@@ -83,7 +83,8 @@ class Level1:
 
                 # shoot action
                 if event.key == pygame.K_SPACE:
-                    result = self.player.weapon.fire(self.player)
+                    result = self.player.weapon.fire(self.player, self.camera)
+
                     if result:
                         if isinstance(result, list):
                             self.bullets.extend(result)

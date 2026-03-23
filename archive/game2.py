@@ -1,8 +1,8 @@
 import pygame
-from .player import Player
-from .UI import UI
-from .enemy import Enemy
-from .camera import Camera
+from game.player import Player
+from game.UI import UI
+from game.enemy import Enemy
+from game.camera import Camera
 
 
 class Game:

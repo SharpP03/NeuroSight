@@ -1,11 +1,18 @@
 import pygame
 import math
 import random
-
 class Enemy:
-    def __init__(self):
-        width, height = pygame.display.get_window_size()
+    def __init__(self, x=None, y=None):
         size = 40
+
+        # spawn on coordinates
+        if x is not None and y is not None:
+            self.rect = pygame.Rect(x, y, size, size)
+            self.speed = 2
+            return
+
+        # Random spawn if no position provided
+        width, height = pygame.display.get_window_size()
 
         side = random.choice(["top", "bottom", "left", "right"])
 
@@ -19,32 +26,3 @@ class Enemy:
         x, y = positions[side]
         self.rect = pygame.Rect(x, y, size, size)
         self.speed = 2
-
-    def update(self, player):
-        # Enemy pos
-        ex = self.rect.centerx
-        ey = self.rect.centery
-
-        # Player pos
-        px = player.rect.centerx
-        py = player.rect.centery
-
-
-        # distance
-        dx = px - ex
-        dy = py - ey
-        dist = math.sqrt(dx * dx + dy * dy)
-
-        # normalizacja
-        if dist != 0:
-            dx /= dist
-            dy /= dist
-
-        # ruch przeciwnika
-        self.rect.x += dx * self.speed
-        self.rect.y += dy * self.speed
-
-    def draw(self, screen, camera):
-        pygame.draw.rect(screen, (255, 0, 0), camera.apply(self.rect))
-
-

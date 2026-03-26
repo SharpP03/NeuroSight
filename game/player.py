@@ -12,7 +12,7 @@ class Player:
         self.health = 10
 
         # Weapon system
-        self.weapon = Pistol()
+        self.weapon = Shotgun()
 
     def update(self, keys):
         dx = 0

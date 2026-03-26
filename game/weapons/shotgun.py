@@ -12,7 +12,7 @@ class Shotgun(Weapon):
         self.fire_rate = 800
         self.damage = 2
 
-    def fire(self, player):
+    def fire(self, player, camera):
         if not self.can_fire():
             return []
 
@@ -23,7 +23,7 @@ class Shotgun(Weapon):
         spread = [-15, -5, 0, 5, 15]
 
         for angle in spread:
-            b = Bullet(player, angle_offset=angle)
+            b = Bullet(player, camera, angle_offset=angle)
             bullets.append(b)
 
         return bullets

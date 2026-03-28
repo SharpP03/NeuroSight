@@ -1,5 +1,5 @@
 from .weapon import Weapon
-from ..bullet import Bullet
+from game.bullets.bullet import Bullet
 
 class Pistol(Weapon):
     def __init__(self):

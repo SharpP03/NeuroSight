@@ -1,6 +1,6 @@
 from .weapon import Weapon
-from ..bullet import Bullet
-import math
+from game.bullets.bullet import Bullet
+
 
 class Shotgun(Weapon):
     def __init__(self):

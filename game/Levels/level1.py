@@ -3,6 +3,8 @@ from game.player import Player
 from game.UI import UI
 from game.enemy import Enemy
 from game.camera import Camera
+from game.bullets.bullet_manager import BulletManager
+
 
 from game.Levels.Map_Loader.tilemap_level1 import tilemap, TILE_SIZE
 from game.Levels.Map_Loader.map_loader import MapLoader
@@ -45,9 +47,8 @@ class Level1:
         # User Interface
         self.UI = UI(self.screen)
 
-        # Entities
-        self.bullets = []
-        self.DESPAWN_DISTANCE = 2000
+        # Bullet manager
+        self.bullet_manager = BulletManager(despawn_distance=2000)
 
         # Player
         self.player = Player(self.WIDTH // 2, self.HEIGHT // 2)
@@ -95,13 +96,8 @@ class Level1:
                 # shoot action
                 if event.key == pygame.K_SPACE:
                     result = self.player.weapon.fire(self.player, self.camera)
-
-                    if result:
-                        if isinstance(result, list):
-                            self.bullets.extend(result)
-                        else:
-                            self.bullets.append(result)
-                        self.camera_shake(intensity=3, duration=80)
+                    self.bullet_manager.add(result)
+                    self.camera_shake(intensity=3, duration=80)
 
     # -----------------------------
     # COLLISIONS
@@ -136,16 +132,7 @@ class Level1:
         keys = pygame.key.get_pressed()
         self.player.update(keys, [obj.rect for obj in self.map_objects])
 
-        for bullet in self.bullets[:]:
-            bullet.update()
-
-            px, py = self.player.rect.center
-
-            dx = bullet.rect.centerx - px
-            dy = bullet.rect.centery - py
-
-            if dx * dx + dy * dy > self.DESPAWN_DISTANCE * self.DESPAWN_DISTANCE:
-                self.bullets.remove(bullet)
+        self.bullet_manager.update(self.player)
 
         for enemy in self.enemies:
             enemy.update(self.player)
@@ -195,8 +182,7 @@ class Level1:
             obj.draw(self.display, self.camera)
 
         # 2. BULLETS
-        for bullet in self.bullets:
-            bullet.draw(self.display, self.camera)
+        self.bullet_manager.draw(self.display, self.camera)
 
         # 3. ENEMIES
         for enemy in self.enemies:
@@ -209,7 +195,7 @@ class Level1:
         if self.shake_affects_ui:
             self.UI.screen = self.display
             self.UI.drawPlayerHp(self.player.health)
-            self.UI.debug(len(self.bullets))
+            self.UI.debug(len(self.bullet_manager.bullets))
             self.UI.drawPoints(self.points)
             self.UI.drawAmmo(self.player.weapon)
 
@@ -219,7 +205,7 @@ class Level1:
         if not self.shake_affects_ui:
             self.UI.screen = self.screen
             self.UI.drawPlayerHp(self.player.health)
-            self.UI.debug(len(self.bullets))
+            self.UI.debug(len(self.bullet_manager.bullets))
             self.UI.drawPoints(self.points)
             self.UI.drawAmmo(self.player.weapon)
 

@@ -1,4 +1,6 @@
 import pygame
+
+from game.Enemies.enemy_manager import EnemyManager
 from game.player import Player
 from game.UI import UI
 from game.enemy import Enemy
@@ -54,9 +56,7 @@ class Level1:
         self.player = Player(self.WIDTH // 2, self.HEIGHT // 2)
 
         # Enemies
-        self.enemies = []
-        self.spawn_delay = 5000
-        self.last_spawn = -5000
+        self.enemy_manager = EnemyManager()
 
         # Load tilemap to level
         loader = MapLoader(tilemap, TILE_SIZE)

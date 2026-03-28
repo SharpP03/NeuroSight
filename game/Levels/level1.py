@@ -4,6 +4,11 @@ from game.UI import UI
 from game.enemy import Enemy
 from game.camera import Camera
 
+from game.Levels.tilemap_level1 import tilemap, TILE_SIZE
+from game.Levels.Objects.wall import Wall
+from game.Levels.Objects.building import Building
+from game.Levels.Objects.tree import Tree
+
 
 class Level1:
     def __init__(self):
@@ -49,6 +54,21 @@ class Level1:
         self.enemies = []
         self.spawn_delay = 5000
         self.last_spawn = -5000
+
+        # Tilemap initialization 
+        self.map_objects = []
+
+        for y, row in enumerate(tilemap):
+            for x, char in enumerate(row):
+                world_x = x * TILE_SIZE
+                world_y = y * TILE_SIZE
+
+                if char == "B":
+                    self.map_objects.append(Wall(world_x, world_y))
+                elif char == "T":
+                    self.map_objects.append(Tree(world_x, world_y))
+                elif char == "H":
+                    self.map_objects.append(Building(world_x, world_y))
 
     # -----------------------------
     # MAIN LOOP
@@ -110,6 +130,11 @@ class Level1:
                 self.player.health -= 1
                 self.enemies.remove(enemy)
 
+    def handle_player_collisions(self):
+        for obj in self.map_objects:
+            if self.player.rect.colliderect(obj.rect):
+                self.player.resolve_collision(obj.rect)
+
     def enemy_hit_actions(self):
         self.points += 1
 
@@ -118,14 +143,14 @@ class Level1:
     # -----------------------------
     def update(self):
         keys = pygame.key.get_pressed()
-        self.player.update(keys)
+        self.player.update(keys, [obj.rect for obj in self.map_objects])
 
         for bullet in self.bullets[:]:
             bullet.update()
 
             # remove bullet if outside MAP
-            if (bullet.rect.x < -(self.MAP_WIDTH//2) or bullet.rect.x > self.MAP_WIDTH//2 or
-                    bullet.rect.y < -(self.MAP_WIDTH//2) or bullet.rect.y > self.MAP_HEIGHT//2):
+            if (bullet.rect.x < -(self.MAP_WIDTH // 2) or bullet.rect.x > self.MAP_WIDTH // 2 or
+                    bullet.rect.y < -(self.MAP_WIDTH // 2) or bullet.rect.y > self.MAP_HEIGHT // 2):
                 self.bullets.remove(bullet)
 
         for enemy in self.enemies:
@@ -171,6 +196,9 @@ class Level1:
     def draw(self):
         # Prepare scene
         self.display.fill((0, 0, 0))
+
+        for obj in self.map_objects:
+            obj.draw(self.display, self.camera)
 
         self.player.draw(self.display, self.camera)
 

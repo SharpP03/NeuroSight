@@ -1,6 +1,7 @@
 import pygame
 
 from game.Enemies.enemy_manager import EnemyManager
+from game.collisions.collision_system import CollisionSystem
 from game.player import Player
 from game.UI import UI
 from game.enemy import Enemy
@@ -61,6 +62,14 @@ class Level1:
         # Load tilemap to level
         loader = MapLoader(tilemap, TILE_SIZE)
         self.map_objects = loader.load()
+
+        # collisions
+        self.collision = CollisionSystem(
+            self.player,
+            self.enemy_manager.enemies,
+            self.map_objects,
+            self.bullet_manager
+        )
 
     # -----------------------------
     # MAIN LOOP
@@ -133,6 +142,8 @@ class Level1:
         self.player.update(keys, [obj.rect for obj in self.map_objects])
 
         self.bullet_manager.update(self.player)
+
+        self.collision.update()
 
         for enemy in self.enemies:
             enemy.update(self.player)

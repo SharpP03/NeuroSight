@@ -19,6 +19,7 @@ class CollisionSystem:
         for enemy in self.enemy_manager.enemies[:]:
             if self.player.rect.colliderect(enemy.rect):
                 self.player.health -= 1
+                self.enemy_manager.points += 1
                 self.enemy_manager.enemies.remove(enemy)
 
     def bullets_vs_enemies(self):

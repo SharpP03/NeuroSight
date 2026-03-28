@@ -8,6 +8,7 @@ class EnemyManager:
         self.enemies = []
         self.spawn_delay = 5000
         self.last_spawn = -5000
+        self.points = 0
 
     def update(self, player):
         for enemy in self.enemies:

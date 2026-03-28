@@ -152,7 +152,7 @@ class Level1:
             self.UI.screen = self.display
             self.UI.drawPlayerHp(self.player.health)
             self.UI.debug(len(self.bullet_manager.bullets))
-            self.UI.drawPoints(self.player.points)
+            self.UI.drawPoints(self.enemy_manager.points)
             self.UI.drawAmmo(self.player.weapon)
 
         ox, oy = self.camera_offset
@@ -162,7 +162,7 @@ class Level1:
             self.UI.screen = self.screen
             self.UI.drawPlayerHp(self.player.health)
             self.UI.debug(len(self.bullet_manager.bullets))
-            self.UI.drawPoints(self.player.points)
+            self.UI.drawPoints(self.enemy_manager.points)
             self.UI.drawAmmo(self.player.weapon)
 
         pygame.display.flip()

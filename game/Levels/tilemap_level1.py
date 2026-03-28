@@ -1,6 +1,6 @@
 # from pygame.examples.moveit import HEIGHT,WIDTH
 
-TILE_SIZE = 64
+TILE_SIZE = 32
 
 tilemap = [
     "BBBBBBBBBBBBBBBBBBBB",

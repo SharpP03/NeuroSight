@@ -19,8 +19,11 @@ class Level1:
         pygame.display.set_caption("NeuroSight – Level 1")
 
         # MAP SIZE
-        self.MAP_WIDTH = 5000
-        self.MAP_HEIGHT = 5000
+        map_width_tiles = max(len(row) for row in tilemap)
+        map_height_tiles = len(tilemap)
+
+        self.MAP_WIDTH = map_width_tiles * TILE_SIZE
+        self.MAP_HEIGHT = map_height_tiles * TILE_SIZE
 
         # assign camera
         self.camera = Camera(self.WIDTH, self.HEIGHT)
@@ -46,6 +49,7 @@ class Level1:
 
         # Entities
         self.bullets = []
+        self.DESPAWN_DISTANCE = 2000
 
         # Player
         self.player = Player(self.WIDTH // 2, self.HEIGHT // 2)
@@ -64,11 +68,11 @@ class Level1:
                 world_y = y * TILE_SIZE
 
                 if char == "B":
-                    self.map_objects.append(Wall(world_x, world_y))
+                    self.map_objects.append(Wall(world_x, world_y, TILE_SIZE))
                 elif char == "T":
-                    self.map_objects.append(Tree(world_x, world_y))
+                    self.map_objects.append(Tree(world_x, world_y, TILE_SIZE))
                 elif char == "H":
-                    self.map_objects.append(Building(world_x, world_y))
+                    self.map_objects.append(Building(world_x, world_y, TILE_SIZE))
 
     # -----------------------------
     # MAIN LOOP
@@ -148,9 +152,12 @@ class Level1:
         for bullet in self.bullets[:]:
             bullet.update()
 
-            # remove bullet if outside MAP
-            if (bullet.rect.x < -(self.MAP_WIDTH // 2) or bullet.rect.x > self.MAP_WIDTH // 2 or
-                    bullet.rect.y < -(self.MAP_WIDTH // 2) or bullet.rect.y > self.MAP_HEIGHT // 2):
+            px, py = self.player.rect.center
+
+            dx = bullet.rect.centerx - px
+            dy = bullet.rect.centery - py
+
+            if dx * dx + dy * dy > self.DESPAWN_DISTANCE * self.DESPAWN_DISTANCE:
                 self.bullets.remove(bullet)
 
         for enemy in self.enemies:
@@ -194,21 +201,24 @@ class Level1:
     # DRAW
     # -----------------------------
     def draw(self):
-        # Prepare scene
         self.display.fill((0, 0, 0))
 
+        # 1. MAP
         for obj in self.map_objects:
             obj.draw(self.display, self.camera)
 
-        self.player.draw(self.display, self.camera)
-
+        # 2. BULLETS
         for bullet in self.bullets:
             bullet.draw(self.display, self.camera)
 
+        # 3. ENEMIES
         for enemy in self.enemies:
             enemy.draw(self.display, self.camera)
 
-        # UI with shake effect
+        # 4. PLAYER
+        self.player.draw(self.display, self.camera)
+
+        # 5. UI
         if self.shake_affects_ui:
             self.UI.screen = self.display
             self.UI.drawPlayerHp(self.player.health)
@@ -216,13 +226,9 @@ class Level1:
             self.UI.drawPoints(self.points)
             self.UI.drawAmmo(self.player.weapon)
 
-        # Get offset from shake
         ox, oy = self.camera_offset
-
-        # Render scene with offset
         self.screen.blit(self.display, (ox, oy))
 
-        # UI without shake effect (if disabled from shake)
         if not self.shake_affects_ui:
             self.UI.screen = self.screen
             self.UI.drawPlayerHp(self.player.health)

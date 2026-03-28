@@ -4,10 +4,8 @@ from game.Enemies.enemy_manager import EnemyManager
 from game.collisions.collision_system import CollisionSystem
 from game.player import Player
 from game.UI import UI
-from game.enemy import Enemy
 from game.camera import Camera
 from game.bullets.bullet_manager import BulletManager
-
 
 from game.Levels.Map_Loader.tilemap_level1 import tilemap, TILE_SIZE
 from game.Levels.Map_Loader.map_loader import MapLoader
@@ -21,52 +19,46 @@ class Level1:
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
         pygame.display.set_caption("NeuroSight – Level 1")
 
-        # MAP SIZE
+        # Map size
         map_width_tiles = max(len(row) for row in tilemap)
         map_height_tiles = len(tilemap)
-
         self.MAP_WIDTH = map_width_tiles * TILE_SIZE
         self.MAP_HEIGHT = map_height_tiles * TILE_SIZE
 
-        # assign camera
+        # Camera
         self.camera = Camera(self.WIDTH, self.HEIGHT)
 
         # Main scene surface
         self.display = pygame.Surface((self.WIDTH, self.HEIGHT))
 
-        # clock and game life cycle
+        # Clock
         self.clock = pygame.time.Clock()
         self.running = True
 
-        # visual effects parameters
+        # Camera shake
         self.camera_offset = [0, 0]
         self.shake_timer = 0
         self.shake_intensity = 0
         self.shake_affects_ui = True
 
-        # game parameters
-        self.points = 0
-
-        # User Interface
+        # UI
         self.UI = UI(self.screen)
 
-        # Bullet manager
+        # Managers
         self.bullet_manager = BulletManager(despawn_distance=2000)
+        self.enemy_manager = EnemyManager()
 
         # Player
         self.player = Player(self.WIDTH // 2, self.HEIGHT // 2)
 
-        # Enemies
-        self.enemy_manager = EnemyManager()
-
-        # Load tilemap to level
+        # Map
         loader = MapLoader(tilemap, TILE_SIZE)
         self.map_objects = loader.load()
 
-        # collisions
+        # Collision system
         self.collision = CollisionSystem(
             self.player,
-            self.enemy_manager.enemies,
+            self.enemy_manager,
             self.map_objects,
             self.bullet_manager
         )
@@ -98,41 +90,13 @@ class Level1:
                     self.running = False
                     return
 
-                # reload
                 if event.key == pygame.K_r:
                     self.player.weapon.start_reload()
 
-                # shoot action
                 if event.key == pygame.K_SPACE:
-                    result = self.player.weapon.fire(self.player, self.camera)
-                    self.bullet_manager.add(result)
+                    bullets = self.player.weapon.fire(self.player, self.camera)
+                    self.bullet_manager.add(bullets)
                     self.camera_shake(intensity=3, duration=80)
-
-    # -----------------------------
-    # COLLISIONS
-    # -----------------------------
-    def handle_bullet_enemy_collision(self):
-        for bullet in self.bullets[:]:
-            for enemy in self.enemies[:]:
-                if bullet.rect.colliderect(enemy.rect):
-                    self.enemy_hit_actions()
-                    self.bullets.remove(bullet)
-                    self.enemies.remove(enemy)
-                    break
-
-    def handle_enemy_melee_attack(self):
-        for enemy in self.enemies[:]:
-            if self.player.rect.colliderect(enemy.rect):
-                self.player.health -= 1
-                self.enemies.remove(enemy)
-
-    def handle_player_collisions(self):
-        for obj in self.map_objects:
-            if self.player.rect.colliderect(obj.rect):
-                self.player.resolve_collision(obj.rect)
-
-    def enemy_hit_actions(self):
-        self.points += 1
 
     # -----------------------------
     # UPDATE
@@ -142,19 +106,11 @@ class Level1:
         self.player.update(keys, [obj.rect for obj in self.map_objects])
 
         self.bullet_manager.update(self.player)
-
+        self.enemy_manager.update(self.player)
         self.collision.update()
 
-        for enemy in self.enemies:
-            enemy.update(self.player)
-
-        self.handle_bullet_enemy_collision()
-        self.handle_enemy_melee_attack()
-        self.spawnEnemy()
-
-        # camera shake
+        # Camera shake
         dt = self.clock.get_time()
-
         if self.shake_timer > 0:
             self.shake_timer -= dt
             import random
@@ -163,17 +119,7 @@ class Level1:
         else:
             self.camera_offset = [0, 0]
 
-        # weapon cooldown & reload
         self.player.weapon.update(self.clock.get_time())
-
-    # -----------------------------
-    # ENEMY SPAWN
-    # -----------------------------
-    def spawnEnemy(self):
-        now = pygame.time.get_ticks()
-        if now - self.last_spawn >= self.spawn_delay:
-            self.last_spawn = now
-            self.enemies.append(Enemy())
 
     # -----------------------------
     # CAMERA SHAKE
@@ -188,26 +134,25 @@ class Level1:
     def draw(self):
         self.display.fill((0, 0, 0))
 
-        # 1. MAP
+        # Map
         for obj in self.map_objects:
             obj.draw(self.display, self.camera)
 
-        # 2. BULLETS
+        # Bullets
         self.bullet_manager.draw(self.display, self.camera)
 
-        # 3. ENEMIES
-        for enemy in self.enemies:
-            enemy.draw(self.display, self.camera)
+        # Enemies
+        self.enemy_manager.draw(self.display, self.camera)
 
-        # 4. PLAYER
+        # Player
         self.player.draw(self.display, self.camera)
 
-        # 5. UI
+        # UI
         if self.shake_affects_ui:
             self.UI.screen = self.display
             self.UI.drawPlayerHp(self.player.health)
             self.UI.debug(len(self.bullet_manager.bullets))
-            self.UI.drawPoints(self.points)
+            self.UI.drawPoints(self.player.points)
             self.UI.drawAmmo(self.player.weapon)
 
         ox, oy = self.camera_offset
@@ -217,7 +162,7 @@ class Level1:
             self.UI.screen = self.screen
             self.UI.drawPlayerHp(self.player.health)
             self.UI.debug(len(self.bullet_manager.bullets))
-            self.UI.drawPoints(self.points)
+            self.UI.drawPoints(self.player.points)
             self.UI.drawAmmo(self.player.weapon)
 
         pygame.display.flip()

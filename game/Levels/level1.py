@@ -4,8 +4,8 @@ from game.UI import UI
 from game.enemy import Enemy
 from game.camera import Camera
 
-from game.Levels.tilemap_level1 import tilemap, TILE_SIZE
-from game.Levels.map_loader import MapLoader
+from game.Levels.Map_Loader.tilemap_level1 import tilemap, TILE_SIZE
+from game.Levels.Map_Loader.map_loader import MapLoader
 
 
 class Level1:

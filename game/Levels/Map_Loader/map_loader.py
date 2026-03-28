@@ -1,4 +1,4 @@
-from game.Levels.map_registry import OBJECT_REGISTRY
+from game.Levels.Map_Loader.map_registry import OBJECT_REGISTRY
 
 class MapLoader:
     def __init__(self, tilemap, tile_size):

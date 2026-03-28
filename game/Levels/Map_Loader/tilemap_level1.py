@@ -8,5 +8,5 @@ tilemap = [
     "B...................B",
     "B...................B",
     "B..................B",
-    "BBBBBBB...BBBBBBBBB",
+    "BBBBBBB...BBBBBBBBBB",
 ]

@@ -5,9 +5,7 @@ from game.enemy import Enemy
 from game.camera import Camera
 
 from game.Levels.tilemap_level1 import tilemap, TILE_SIZE
-from game.Levels.Objects.wall import Wall
-from game.Levels.Objects.building import Building
-from game.Levels.Objects.tree import Tree
+from game.Levels.map_loader import MapLoader
 
 
 class Level1:
@@ -59,20 +57,9 @@ class Level1:
         self.spawn_delay = 5000
         self.last_spawn = -5000
 
-        # Tilemap initialization 
-        self.map_objects = []
-
-        for y, row in enumerate(tilemap):
-            for x, char in enumerate(row):
-                world_x = x * TILE_SIZE
-                world_y = y * TILE_SIZE
-
-                if char == "B":
-                    self.map_objects.append(Wall(world_x, world_y, TILE_SIZE))
-                elif char == "T":
-                    self.map_objects.append(Tree(world_x, world_y, TILE_SIZE))
-                elif char == "H":
-                    self.map_objects.append(Building(world_x, world_y, TILE_SIZE))
+        # Load tilemap to level
+        loader = MapLoader(tilemap, TILE_SIZE)
+        self.map_objects = loader.load()
 
     # -----------------------------
     # MAIN LOOP

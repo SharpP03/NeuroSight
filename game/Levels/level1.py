@@ -96,7 +96,7 @@ class Level1:
                 if event.key == pygame.K_SPACE:
                     bullets = self.player.weapon.fire(self.player, self.camera)
                     self.bullet_manager.add(bullets)
-                    self.camera_shake(intensity=3, duration=80)
+                    self.camera_shake(intensity=3, duration=80) # TODO: implement camera effects and manager class
 
     # -----------------------------
     # UPDATE
